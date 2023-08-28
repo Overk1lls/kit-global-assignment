@@ -4,10 +4,9 @@ import {
   HttpStatus,
   Post,
   UseGuards,
-  InternalServerErrorException,
-  BadRequestException,
   Body,
   Req,
+  Get,
 } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';

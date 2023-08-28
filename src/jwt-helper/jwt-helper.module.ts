@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { JwtHelperService } from './jwt-helper.service';
 import { jwtAlgorithm, jwtAudience, jwtAccessTokenTTL, jwtIssuer } from './jwt-helper.constants';
 
@@ -27,6 +27,7 @@ import { jwtAlgorithm, jwtAudience, jwtAccessTokenTTL, jwtIssuer } from './jwt-h
       },
     }),
   ],
-  providers: [JwtHelperService, JwtService],
+  providers: [JwtHelperService],
+  exports: [JwtHelperService],
 })
 export class JwtHelperModule {}
