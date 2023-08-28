@@ -10,6 +10,7 @@ import {
   Param,
   BadRequestException,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -78,15 +79,22 @@ export class ExercisesController {
       throw new BadRequestException('Nothing to update!');
     }
 
-    const objectId = new Types.ObjectId(id);
-
-    if (!(await this.exercisesService.getOneById(objectId))) {
-      throw new BadRequestException('Such exercise not found!');
-    }
-
     return {
       message: 'Successfully updated!',
-      exercise: await this.exercisesService.updateOneById(objectId, dto),
+      exercise: await this.exercisesService.updateOneById(new Types.ObjectId(id), dto),
     };
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('/:id')
+  @UseGuards(AuthGuard)
+  async deleteExerciseById(@Req() req: Request & { user: JwtPayload }, @Param('id') id: string) {
+    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesDelete], req.user.scopes);
+
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid id');
+    }
+
+    await this.exercisesService.deleteOneById(new Types.ObjectId(id));
   }
 }
