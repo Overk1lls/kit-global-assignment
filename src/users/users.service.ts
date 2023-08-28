@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { User } from '../schemas';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, ProjectionType, Types } from 'mongoose';
 import { SignUpDto } from '../dto';
 import { ConfigService } from '@nestjs/config';
 
@@ -11,11 +11,11 @@ export class UsersService {
   constructor(
     private readonly configService: ConfigService,
 
-    @InjectModel(User.name) private readonly usersModel: Model<User>,
+    @InjectModel(User.name) private readonly UsersModel: Model<User>,
   ) {}
 
-  async create(dto: SignUpDto): Promise<Omit<User, 'password'> & { id: string }> {
-    const document = new this.usersModel({
+  async create(dto: SignUpDto): Promise<Omit<User, 'password'> & { _id: Types.ObjectId }> {
+    const document = new this.UsersModel({
       email: dto.email.toLowerCase(),
       username: dto.username,
       password: await this.hashPassword(dto.password),
@@ -25,11 +25,12 @@ export class UsersService {
     const object = saveResult.toObject();
     delete object.password;
 
-    return { ...object, id: object._id.toHexString() };
+    return object;
   }
 
-  async findOne(filterQuery: FilterQuery<User>) {
-    return await this.usersModel.findOne(filterQuery, { password: false });
+  async findOne(filterQuery: FilterQuery<User>, projection: ProjectionType<User> = { password: false }) {
+    const user = await this.UsersModel.findOne(filterQuery, projection);
+    return user?.toObject();
   }
 
   private async hashPassword(pw: string) {
