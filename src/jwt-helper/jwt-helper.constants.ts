@@ -1,9 +1,7 @@
-import { JwtBearerScope } from './auth.enum';
+import { JwtBearerScope } from './jwt-helper.enum';
 
 export const JwtBearerScopeDescriptions: Readonly<Record<JwtBearerScope, string>> = {
-  [JwtBearerScope.UserRead]: 'For Access Token. Scope to read users.',
-  [JwtBearerScope.UserCreate]: 'For Access Token. Scope to create users.',
-  [JwtBearerScope.UserUpdate]: 'For Access Token. Scope to update user.',
+  [JwtBearerScope.ExercisesCreate]: 'For Access Token. Scope to create exercises',
   [JwtBearerScope.TokenRefresh]: 'For Refresh Token. Scope to refresh token.',
 };
 

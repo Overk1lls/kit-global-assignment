@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { JwtHelperModule } from './jwt-helper/jwt-helper.module';
+import { ExercisesModule } from './exercises/exercises.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -18,8 +20,10 @@ import { UsersModule } from './users/users.module';
         uri: configService.getOrThrow<string>('MONGO_URI'),
       }),
     }),
+    JwtHelperModule,
     AuthModule,
     UsersModule,
+    ExercisesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
