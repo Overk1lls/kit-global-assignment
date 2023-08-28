@@ -9,10 +9,11 @@ import {
   Get,
   Param,
   BadRequestException,
+  Patch,
 } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { ExerciseCreateDto } from '../dto';
+import { ExerciseCreateDto, ExerciseUpdateDto } from '../dto';
 import { Request } from 'express';
 import { JwtPayload } from '../interfaces';
 import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
@@ -57,5 +58,35 @@ export class ExercisesController {
     }
 
     return await this.exercisesService.getOneById(new Types.ObjectId(id));
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Patch('/:id')
+  @UseGuards(AuthGuard)
+  async updateExerciseById(
+    @Req() req: Request & { user: JwtPayload },
+    @Param('id') id: string,
+    @Body() dto: ExerciseUpdateDto,
+  ) {
+    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesUpdate], req.user.scopes);
+
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid id');
+    }
+
+    if (Object.values(dto).every((v) => !v)) {
+      throw new BadRequestException('Nothing to update!');
+    }
+
+    const objectId = new Types.ObjectId(id);
+
+    if (!(await this.exercisesService.getOneById(objectId))) {
+      throw new BadRequestException('Such exercise not found!');
+    }
+
+    return {
+      message: 'Successfully updated!',
+      exercise: await this.exercisesService.updateOneById(objectId, dto),
+    };
   }
 }

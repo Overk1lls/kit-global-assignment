@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, UpdateQuery } from 'mongoose';
 import { Exercise } from '../schemas';
 import { ExerciseCreateDto } from '../dto';
 
@@ -20,7 +20,7 @@ export class ExercisesService {
 
   async getOneById(id: Types.ObjectId) {
     const exercise = await this.ExerciseModel.findById(id);
-    return exercise.toObject();
+    return exercise?.toObject();
   }
 
   async getAll() {
@@ -30,5 +30,10 @@ export class ExercisesService {
 
   async getTotal() {
     return await this.ExerciseModel.countDocuments();
+  }
+
+  async updateOneById(id: Types.ObjectId, query: UpdateQuery<Exercise>) {
+    const exercise = await this.ExerciseModel.findByIdAndUpdate(id, query, { new: true, upsert: false });
+    return exercise.toObject();
   }
 }
