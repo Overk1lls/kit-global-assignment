@@ -17,4 +17,13 @@ export class ExercisesService {
 
     return saveResult.toObject();
   }
+
+  async getAll() {
+    const exercises = await this.ExerciseModel.find();
+    return exercises.map((ex) => ex.toObject());
+  }
+
+  async getTotal() {
+    return await this.ExerciseModel.countDocuments();
+  }
 }

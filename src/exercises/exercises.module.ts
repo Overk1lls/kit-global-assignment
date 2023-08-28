@@ -6,10 +6,7 @@ import { ExercisesController } from './exercises.controller';
 import { Exercise, ExerciseSchema } from '../schemas';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Exercise.name, schema: ExerciseSchema }]),
-    JwtHelperModule,
-  ],
+  imports: [MongooseModule.forFeature([{ name: Exercise.name, schema: ExerciseSchema }]), JwtHelperModule],
   providers: [ExercisesService],
   controllers: [ExercisesController],
 })

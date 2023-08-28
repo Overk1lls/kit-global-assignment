@@ -1,13 +1,4 @@
-import {
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  UseGuards,
-  Body,
-  Req,
-  Get,
-} from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, UseGuards, Body, Req, Get } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ExerciseCreateDto } from '../dto';
@@ -30,5 +21,16 @@ export class ExercisesController {
     this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesCreate], req.user.scopes);
 
     return await this.exercisesService.create(dto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/')
+  @UseGuards(AuthGuard)
+  async getExercises(@Req() req: Request & { user: JwtPayload }) {
+    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesRead], req.user.scopes);
+
+    const [exercises, total] = await Promise.all([this.exercisesService.getAll(), this.exercisesService.getTotal()]);
+
+    return { exercises, total };
   }
 }

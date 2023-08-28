@@ -2,6 +2,7 @@ import { JwtBearerScope } from './jwt-helper.enum';
 
 export const JwtBearerScopeDescriptions: Readonly<Record<JwtBearerScope, string>> = {
   [JwtBearerScope.ExercisesCreate]: 'For Access Token. Scope to create exercises',
+  [JwtBearerScope.ExercisesRead]: 'For Access Token. Scope to read exercises',
   [JwtBearerScope.TokenRefresh]: 'For Refresh Token. Scope to refresh token.',
 };
 
