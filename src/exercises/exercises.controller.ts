@@ -1,4 +1,15 @@
-import { Controller, HttpCode, HttpStatus, Post, UseGuards, Body, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  Body,
+  Req,
+  Get,
+  Param,
+  BadRequestException,
+} from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ExerciseCreateDto } from '../dto';
@@ -6,6 +17,7 @@ import { Request } from 'express';
 import { JwtPayload } from '../interfaces';
 import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
 import { JwtBearerScope } from '../jwt-helper/jwt-helper.enum';
+import { Types, isValidObjectId } from 'mongoose';
 
 @Controller('exercises')
 export class ExercisesController {
@@ -32,5 +44,18 @@ export class ExercisesController {
     const [exercises, total] = await Promise.all([this.exercisesService.getAll(), this.exercisesService.getTotal()]);
 
     return { exercises, total };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  @UseGuards(AuthGuard)
+  async getExerciseById(@Req() req: Request & { user: JwtPayload }, @Param('id') id: string) {
+    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesRead], req.user.scopes);
+
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid id');
+    }
+
+    return await this.exercisesService.getOneById(new Types.ObjectId(id));
   }
 }
