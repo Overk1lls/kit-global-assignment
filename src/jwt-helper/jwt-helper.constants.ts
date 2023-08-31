@@ -5,6 +5,7 @@ export const JwtBearerScopeDescriptions: Readonly<Record<JwtBearerScope, string>
   [JwtBearerScope.ExercisesRead]: 'For Access Token. Scope to read exercises',
   [JwtBearerScope.ExercisesUpdate]: 'For Access Token. Scope to update exercises',
   [JwtBearerScope.ExercisesDelete]: 'For Access Token. Scope to delete exercises',
+  [JwtBearerScope.ProjectsCreate]: 'For Access Token. Scope to create projects',
   [JwtBearerScope.TokenRefresh]: 'For Refresh Token. Scope to refresh token.',
 };
 

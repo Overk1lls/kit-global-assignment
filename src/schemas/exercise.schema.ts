@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { StatusType } from '../exercises/exercises.types';
+import { Project } from './project.schema';
 
 @Schema({ collection: 'exercises' })
 export class Exercise {
@@ -12,8 +14,8 @@ export class Exercise {
   @Prop({ required: true })
   status: StatusType;
 
-  @Prop()
-  project: string;
+  @Prop({ type: Types.ObjectId, ref: 'Project' })
+  project: Project;
 }
 
 export const ExerciseSchema = SchemaFactory.createForClass(Exercise);

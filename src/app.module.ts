@@ -5,6 +5,7 @@ import { JwtHelperModule } from './jwt-helper/jwt-helper.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ProjectsModule } from './projects/projects.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 
@@ -24,6 +25,7 @@ import { AppController } from './app.controller';
     AuthModule,
     UsersModule,
     ExercisesModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
