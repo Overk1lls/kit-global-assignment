@@ -4,5 +4,8 @@ export enum JwtBearerScope {
   ExercisesUpdate = 'exercises:update',
   ExercisesDelete = 'exercises:delete',
   ProjectsCreate = 'projects:create',
+  ProjectsRead = 'projects:read',
+  ProjectsUpdate = 'projects:update',
+  ProjectsDelete = 'projects:delete',
   TokenRefresh = 'token:refresh',
 }
