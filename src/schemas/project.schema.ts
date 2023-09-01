@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { Exercise } from './exercise.schema';
 
-@Schema({ collection: 'projects' })
+@Schema({ collection: 'projects', timestamps: true })
 export class Project {
   @Prop({ required: true })
   name: string;

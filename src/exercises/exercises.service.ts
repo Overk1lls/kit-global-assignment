@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, UpdateQuery } from 'mongoose';
+import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { Exercise } from '../schemas';
-import { ExerciseCreateDto } from '../dto';
+import { ExerciseCreateDto, ExerciseQueryDto } from '../dto';
 
 @Injectable()
 export class ExercisesService {
@@ -23,13 +23,19 @@ export class ExercisesService {
     return exercise?.toObject();
   }
 
-  async getAll() {
-    const exercises = await this.ExerciseModel.find();
-    return exercises.map((ex) => ex.toObject());
-  }
+  async getAll(query: ExerciseQueryDto) {
+    const filter: FilterQuery<Exercise> = {};
 
-  async getTotal() {
-    return await this.ExerciseModel.countDocuments();
+    if (query.project) Object.assign(filter, { project: query.project });
+    if (query.status) Object.assign(filter, { status: query.status });
+
+    const exercises = await this.ExerciseModel.find(filter)
+      .limit(query.limit)
+      .skip(query.skip)
+      .sort({ updatedAt: query.createdAt })
+      .exec();
+
+    return exercises.map((ex) => ex.toObject());
   }
 
   async updateOneById(id: Types.ObjectId, query: UpdateQuery<Exercise>) {

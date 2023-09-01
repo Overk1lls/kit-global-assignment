@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 import { StatusType } from '../exercises/exercises.types';
 import { Project } from './project.schema';
 
-@Schema({ collection: 'exercises' })
+@Schema({ collection: 'exercises', timestamps: true })
 export class Exercise {
   @Prop({ required: true })
   name: string;
