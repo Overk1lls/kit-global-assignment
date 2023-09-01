@@ -12,16 +12,18 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Types, isValidObjectId } from 'mongoose';
 import { ProjectsService } from './projects.service';
 import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
 import { JwtBearerScope } from '../jwt-helper/jwt-helper.enum';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtPayload } from '../interfaces';
-import { ProjectCreateDto } from '../dto/project-create.dto';
-import { Types, isValidObjectId } from 'mongoose';
-import { ProjectUpdateDto } from '../dto';
+import { ProjectCreateDto, ProjectUpdateDto } from '../dto';
 
+@ApiTags('projects')
+@ApiBearerAuth()
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService, private readonly jwtHelperService: JwtHelperService) {}

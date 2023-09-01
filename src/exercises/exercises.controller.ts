@@ -13,6 +13,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ExerciseCreateDto, ExerciseQueryDto, ExerciseUpdateDto } from '../dto';
@@ -22,6 +23,8 @@ import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
 import { JwtBearerScope } from '../jwt-helper/jwt-helper.enum';
 import { Types, isValidObjectId } from 'mongoose';
 
+@ApiTags('exercises')
+@ApiBearerAuth()
 @Controller('exercises')
 export class ExercisesController {
   constructor(

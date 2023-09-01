@@ -4,4 +4,6 @@ export * from './exercise-create.dto';
 export * from './exercise-update.dto';
 export * from './exercise-query.dto';
 export * from './project-update.dto';
+export * from './project-create.dto';
 export * from './pagination-query.dto';
+export * from './auth-response.dto';
