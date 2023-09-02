@@ -1,18 +1,41 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
+import { ConfigModule } from '@nestjs/config';
+import { getModelToken } from '@nestjs/mongoose';
+import { User } from '../schemas';
+import { mockUser, mockUsersModel } from '../../test/mocks';
 
 describe('UsersService', () => {
-  let service: UsersService;
+  let usersService: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      imports: [ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' })],
+      providers: [
+        UsersService,
+        {
+          provide: getModelToken(User.name),
+          useValue: mockUsersModel,
+        },
+      ],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    usersService = module.get<UsersService>(UsersService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('create()', () => {
+    it('should create a user', async () => {
+      const user = await usersService.create(mockUser);
+
+      expect(user).toEqual(mockUser);
+    });
+  });
+
+  describe('findOne()', () => {
+    it('should find a user', async () => {
+      const user = await usersService.findOne({});
+
+      expect(user).toEqual(mockUser);
+    });
   });
 });

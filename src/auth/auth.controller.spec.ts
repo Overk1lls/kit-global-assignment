@@ -1,18 +1,50 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
+import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
+import { mockJwtHelperService, mockJwtTokens, mockUser, mockUsersService } from '../../test/mocks';
 
 describe('AuthController', () => {
-  let controller: AuthController;
+  let moduleRef: TestingModule;
+  let authController: AuthController;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       controllers: [AuthController],
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: mockUsersService,
+        },
+        {
+          provide: JwtHelperService,
+          useValue: mockJwtHelperService,
+        },
+      ],
     }).compile();
 
-    controller = module.get<AuthController>(AuthController);
+    authController = moduleRef.get<AuthController>(AuthController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  afterAll(async () => {
+    await moduleRef.close();
+  });
+
+  describe('signUp()', () => {
+    it('should be success', async () => {
+      const result = await authController.signUp(mockUser);
+
+      expect(result).toEqual(mockJwtTokens);
+    });
+  });
+
+  describe('signIn()', () => {
+    it('should be success', async () => {
+      const result = await authController.signIn(mockUser);
+
+      expect(result).toEqual(mockJwtTokens);
+    });
   });
 });

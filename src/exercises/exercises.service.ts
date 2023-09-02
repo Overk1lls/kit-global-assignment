@@ -6,20 +6,19 @@ import { ExerciseCreateDto, ExerciseQueryDto } from '../dto';
 
 @Injectable()
 export class ExercisesService {
-  constructor(@InjectModel(Exercise.name) private readonly ExerciseModel: Model<Exercise>) {}
+  constructor(@InjectModel(Exercise.name) private readonly exerciseModel: Model<Exercise>) {}
 
   async create(dto: ExerciseCreateDto) {
-    const document = new this.ExerciseModel({
+    const document = await this.exerciseModel.create({
       ...dto,
       status: 'Pending',
     });
-    const saveResult = await document.save();
 
-    return saveResult.toObject();
+    return document.toObject();
   }
 
   async getOneById(id: Types.ObjectId) {
-    const exercise = await this.ExerciseModel.findById(id);
+    const exercise = await this.exerciseModel.findById(id);
     return exercise?.toObject();
   }
 
@@ -29,7 +28,8 @@ export class ExercisesService {
     if (query.project) Object.assign(filter, { project: query.project });
     if (query.status) Object.assign(filter, { status: query.status });
 
-    const exercises = await this.ExerciseModel.find(filter)
+    const exercises = await this.exerciseModel
+      .find(filter)
       .limit(query.limit)
       .skip(query.skip)
       .sort({ updatedAt: query.createdAt })
@@ -39,7 +39,7 @@ export class ExercisesService {
   }
 
   async updateOneById(id: Types.ObjectId, query: UpdateQuery<Exercise>) {
-    const exercise = await this.ExerciseModel.findByIdAndUpdate(id, query, { new: true, upsert: false });
+    const exercise = await this.exerciseModel.findByIdAndUpdate(id, query, { new: true, upsert: false });
 
     if (!exercise) {
       throw new BadRequestException('Such exercise not found!');
@@ -49,7 +49,7 @@ export class ExercisesService {
   }
 
   async deleteOneById(id: Types.ObjectId) {
-    const result = await this.ExerciseModel.findByIdAndDelete(id);
+    const result = await this.exerciseModel.findByIdAndDelete(id);
 
     if (!result) {
       throw new BadRequestException('Such exercise not found!');

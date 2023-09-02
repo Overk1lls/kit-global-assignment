@@ -12,14 +12,12 @@ export class ProjectsService {
   ) {}
 
   async create(dto: ProjectCreateDto) {
-    const project = new this.ProjectModel({
+    const project = await this.ProjectModel.create({
       ...dto,
       exercises: [],
     });
-    await project.save();
 
-    const exercises = dto.exercises.map((ex) => new this.ExerciseModel(ex));
-    await this.ExerciseModel.insertMany(exercises);
+    const exercises = await this.ExerciseModel.insertMany(dto.exercises);
 
     return await this.ProjectModel.findByIdAndUpdate(project._id, { $push: { exercises } }, { new: true });
   }

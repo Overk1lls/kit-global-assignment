@@ -15,14 +15,12 @@ export class UsersService {
   ) {}
 
   async create(dto: SignUpDto): Promise<Omit<User, 'password'> & { _id: Types.ObjectId }> {
-    const document = new this.UserModel({
+    const document = await this.UserModel.create({
       email: dto.email.toLowerCase(),
       username: dto.username,
       password: await this.hashPassword(dto.password),
     });
-
-    const saveResult = await document.save();
-    const object = saveResult.toObject();
+    const object = document.toObject();
     delete object.password;
 
     return object;
