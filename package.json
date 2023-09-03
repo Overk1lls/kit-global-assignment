@@ -79,13 +79,14 @@
       "**/*.(t|j)s"
     ],
     "coveragePathIgnorePatterns": [
+      ".dto.ts",
       ".module.ts",
       ".guard.ts",
-      ".middleware.ts",
       ".strategy.ts",
+      ".middleware.ts",
+      ".env.helper.ts",
       "main.ts",
-      "index.ts",
-      ".dto.ts"
+      "index.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

@@ -1,9 +1,11 @@
 import * as bcrypt from 'bcrypt';
-import { Exercise, Project, User } from '../src/schemas';
-import { jwtAudience, jwtIssuer, jwtScopeStrings } from '../src/jwt-helper/jwt-helper.constants';
 import { Types } from 'mongoose';
-import { JwtPayload } from '../src/interfaces';
 import { Request } from 'express';
+import { JwtPayload } from '../src/jwt-helper/interfaces';
+import { jwtAudience, jwtIssuer, jwtScopeStrings } from '../src/jwt-helper/jwt-helper.constants';
+import { Exercise } from '../src/exercises/schemas';
+import { Project } from '../src/projects/schemas';
+import { User } from '../src/users/schemas';
 
 export const mockRequest = { user: { scopes: [] } } as Request & { user: JwtPayload };
 

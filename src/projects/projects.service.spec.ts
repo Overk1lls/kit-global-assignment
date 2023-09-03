@@ -1,10 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProjectsService } from './projects.service';
-import { getModelToken } from '@nestjs/mongoose';
-import { Exercise, Project } from '../schemas';
-import { mockExercise, mockExerciseModel, mockObjectId, mockProject, mockProjectModel } from '../../test/mocks';
-import { ProjectCreateDto } from '../dto';
 import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+import { ProjectsService } from './projects.service';
+import { Project } from './schemas';
+import { Exercise } from '../exercises/schemas';
+import { ProjectCreateDto } from './dto';
+import { mockExercise, mockExerciseModel, mockObjectId, mockProject, mockProjectModel } from '../../test/mocks';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;

@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { Types } from 'mongoose';
 import { JwtBearerScope } from './jwt-helper.enum';
 import { fullAccessScopes, jwtAudience, jwtIssuer, jwtRefreshTokenTTL } from './jwt-helper.constants';
-import { JwtPayload } from '../interfaces';
+import { JwtPayload } from './interfaces';
 
 @Injectable()
 export class JwtHelperService {

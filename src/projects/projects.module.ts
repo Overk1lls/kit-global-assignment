@@ -3,7 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtHelperModule } from '../jwt-helper/jwt-helper.module';
 import { ProjectsService } from './projects.service';
 import { ProjectsController } from './projects.controller';
-import { Exercise, ExerciseSchema, Project, ProjectSchema } from '../schemas';
+import { Project, ProjectSchema } from './schemas';
+import { Exercise, ExerciseSchema } from '../exercises/schemas';
 
 @Module({
   imports: [

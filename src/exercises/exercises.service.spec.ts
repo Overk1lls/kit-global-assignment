@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ExercisesService } from './exercises.service';
-import { getModelToken } from '@nestjs/mongoose';
-import { Exercise } from '../schemas';
-import { mockExercise, mockExerciseModel, mockObjectId } from '../../test/mocks';
-import { ExerciseCreateDto } from '../dto';
 import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken } from '@nestjs/mongoose';
+import { ExercisesService } from './exercises.service';
+import { Exercise } from './schemas';
+import { ExerciseCreateDto } from './dto';
+import { mockExercise, mockExerciseModel, mockObjectId } from '../../test/mocks';
 
 describe('ExercisesService', () => {
   let exercisesService: ExercisesService;

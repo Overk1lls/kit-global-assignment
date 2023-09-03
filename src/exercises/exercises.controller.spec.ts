@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ExercisesController } from './exercises.controller';
 import { ExercisesService } from './exercises.service';
 import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
-import { ExerciseCreateDto } from '../dto';
+import { ExerciseCreateDto } from './dto';
 import { mockExercise, mockExercisesService, mockJwtHelperService, mockObjectIdString } from '../../test/mocks';
 
 describe('ExercisesController', () => {

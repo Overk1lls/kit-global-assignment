@@ -15,7 +15,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ProjectCreateDto, ProjectUpdateDto } from '../dto';
+import { ProjectCreateDto, ProjectUpdateDto } from './dto';
 
 @ApiTags('projects')
 @ApiBearerAuth()

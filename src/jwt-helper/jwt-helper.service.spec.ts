@@ -7,7 +7,7 @@ import { jwtAlgorithm, jwtAudience, jwtAccessTokenTTL, jwtIssuer, fullAccessScop
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { mockJwtTokens } from '../../test/mocks';
-import { JwtPayload } from '../interfaces';
+import { JwtPayload } from './interfaces';
 
 describe('JwtService', () => {
   let jwtHelperService: JwtHelperService;

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
 import { ConfigModule } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
-import { User } from '../schemas';
+import { UsersService } from './users.service';
+import { User } from './schemas';
 import { mockUser, mockUsersModel } from '../../test/mocks';
 
 describe('UsersService', () => {

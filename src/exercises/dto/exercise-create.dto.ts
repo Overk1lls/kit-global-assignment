@@ -1,7 +1,7 @@
 import { IsArray, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ExerciseStatuses } from './exercise-update.dto';
-import { StatusType } from '../exercises/exercises.types';
 import { Type } from 'class-transformer';
+import { StatusType } from '../exercises.types';
+import { ExerciseStatuses } from '../exercises.constants';
 
 export class ExerciseCreateDto {
   @IsString()

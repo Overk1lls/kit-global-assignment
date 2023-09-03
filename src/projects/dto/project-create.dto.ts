@@ -8,8 +8,8 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Exercise } from '../schemas';
-import { ExerciseStatuses } from './exercise-update.dto';
+import { Exercise } from '../../exercises/schemas';
+import { ExerciseStatuses } from '../../exercises/exercises.constants';
 
 @ValidatorConstraint()
 export class IsExerciseArray implements ValidatorConstraintInterface {

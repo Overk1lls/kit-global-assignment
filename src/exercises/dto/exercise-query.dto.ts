@@ -1,7 +1,7 @@
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { StatusType } from '../exercises/exercises.types';
-import { PaginationQueryDto } from './pagination-query.dto';
-import { ExerciseStatuses } from './exercise-update.dto';
+import { StatusType } from '../exercises.types';
+import { ExerciseStatuses } from '../exercises.constants';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 export class ExerciseQueryDto extends PaginationQueryDto {
   @IsIn(ExerciseStatuses)

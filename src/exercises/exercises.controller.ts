@@ -16,7 +16,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ExercisesService } from './exercises.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ExerciseCreateDto, ExerciseQueryDto, ExerciseUpdateDto } from '../dto';
+import { ExerciseCreateDto, ExerciseQueryDto, ExerciseUpdateDto } from './dto';
 
 @ApiTags('exercises')
 @ApiBearerAuth()

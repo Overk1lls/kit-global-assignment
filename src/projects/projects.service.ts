@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Exercise, Project } from '../schemas';
 import { Model, Types, UpdateQuery } from 'mongoose';
-import { ProjectCreateDto } from '../dto/project-create.dto';
+import { ProjectCreateDto } from './dto/project-create.dto';
+import { Project } from './schemas';
+import { Exercise } from '../exercises/schemas';
 
 @Injectable()
 export class ProjectsService {

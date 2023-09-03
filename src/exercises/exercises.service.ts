@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
-import { Exercise } from '../schemas';
-import { ExerciseCreateDto, ExerciseQueryDto } from '../dto';
+import { Exercise } from './schemas';
+import { ExerciseCreateDto, ExerciseQueryDto } from './dto';
 
 @Injectable()
 export class ExercisesService {

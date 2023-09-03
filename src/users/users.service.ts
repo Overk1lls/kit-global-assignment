@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, ProjectionType, Types } from 'mongoose';
-import { User } from '../schemas';
-import { SignUpDto } from '../dto';
+import { SignUpDto } from '../auth/dto';
+import { User } from './schemas';
 
 @Injectable()
 export class UsersService {

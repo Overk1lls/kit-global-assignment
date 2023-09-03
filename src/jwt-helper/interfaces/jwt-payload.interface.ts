@@ -1,4 +1,4 @@
-import { JwtBearerScope } from '../jwt-helper/jwt-helper.enum';
+import { JwtBearerScope } from '../jwt-helper.enum';
 
 export interface JwtPayload {
   sub: string;

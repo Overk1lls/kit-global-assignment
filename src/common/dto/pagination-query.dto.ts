@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsNumberString, IsOptional } from 'class-validator';
 
 interface ToNumberOptions {
   default?: number;
@@ -28,8 +28,7 @@ export function toNumber(value: string, opts: ToNumberOptions = {}): number {
 }
 
 export class PaginationQueryDto {
-  @Transform(({ value }) => toNumber(value, { default: 0, min: 0 }))
-  @IsNumber()
+  @IsNumberString()
   @IsOptional()
   limit?: number;
 
