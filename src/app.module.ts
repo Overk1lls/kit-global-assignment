@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtHelperModule } from './jwt-helper/jwt-helper.module';
@@ -6,6 +6,8 @@ import { ExercisesModule } from './exercises/exercises.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ExercisesMiddleware } from './exercises/exercises.middleware';
+import { ProjectsMiddleware } from './projects/projects.middleware';
 
 @Module({
   imports: [
@@ -27,4 +29,9 @@ import { ProjectsModule } from './projects/projects.module';
   ],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ExercisesMiddleware).forRoutes('exercises');
+    consumer.apply(ProjectsMiddleware).forRoutes('projects');
+  }
+}

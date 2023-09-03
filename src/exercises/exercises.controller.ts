@@ -5,7 +5,6 @@ import {
   Post,
   UseGuards,
   Body,
-  Req,
   Get,
   Param,
   BadRequestException,
@@ -14,39 +13,28 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ExercisesService } from './exercises.service';
-import { AuthGuard } from '../auth/auth.guard';
-import { ExerciseCreateDto, ExerciseQueryDto, ExerciseUpdateDto } from '../dto';
-import { Request } from 'express';
-import { JwtPayload } from '../interfaces';
-import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
-import { JwtBearerScope } from '../jwt-helper/jwt-helper.enum';
 import { Types, isValidObjectId } from 'mongoose';
+import { ExercisesService } from './exercises.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ExerciseCreateDto, ExerciseQueryDto, ExerciseUpdateDto } from '../dto';
 
 @ApiTags('exercises')
 @ApiBearerAuth()
 @Controller('exercises')
 export class ExercisesController {
-  constructor(
-    private readonly exercisesService: ExercisesService,
-    private readonly jwtHelperService: JwtHelperService,
-  ) {}
+  constructor(private readonly exercisesService: ExercisesService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
-  @UseGuards(AuthGuard)
-  async createOne(@Req() req: Request & { user: JwtPayload }, @Body() dto: ExerciseCreateDto) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesCreate], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async createOne(@Body() dto: ExerciseCreateDto) {
     return await this.exercisesService.create(dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('/')
-  @UseGuards(AuthGuard)
-  async getExercises(@Req() req: Request & { user: JwtPayload }, @Query() query: ExerciseQueryDto) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesRead], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async getExercises(@Query() query: ExerciseQueryDto) {
     const exercises = await this.exercisesService.getAll(query);
 
     return {
@@ -57,10 +45,8 @@ export class ExercisesController {
 
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
-  @UseGuards(AuthGuard)
-  async getExerciseById(@Req() req: Request & { user: JwtPayload }, @Param('id') id: string) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesRead], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async getExerciseById(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
@@ -70,14 +56,8 @@ export class ExercisesController {
 
   @HttpCode(HttpStatus.OK)
   @Patch('/:id')
-  @UseGuards(AuthGuard)
-  async updateExerciseById(
-    @Req() req: Request & { user: JwtPayload },
-    @Param('id') id: string,
-    @Body() dto: ExerciseUpdateDto,
-  ) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesUpdate], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async updateExerciseById(@Param('id') id: string, @Body() dto: ExerciseUpdateDto) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
@@ -94,10 +74,8 @@ export class ExercisesController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
-  @UseGuards(AuthGuard)
-  async deleteExerciseById(@Req() req: Request & { user: JwtPayload }, @Param('id') id: string) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ExercisesDelete], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async deleteExerciseById(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }

@@ -22,16 +22,18 @@ export class AuthService {
   }
 
   async signIn(dto: SignInDto) {
-    const user = await this.usersService.findOne({ username: dto.username }, { password: true });
-
-    if (!user) {
-      throw new BadRequestException('User not found!');
-    }
-
-    if (!(await bcrypt.compare(dto.password, user.password))) {
-      throw new BadRequestException('Password is incorrect!');
-    }
+    const user = await this.validateUser(dto);
 
     return await this.jwtHelperService.generateUserTokens(user._id);
+  }
+
+  private async validateUser(dto: SignInDto) {
+    const user = await this.usersService.findOne({ username: dto.username }, { password: true });
+
+    if (user && (await bcrypt.compare(dto.password, user.password))) {
+      return user;
+    }
+
+    throw new BadRequestException('Credentials are incorrect!');
   }
 }

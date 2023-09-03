@@ -9,49 +9,38 @@ import {
   Param,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { Types, isValidObjectId } from 'mongoose';
 import { ProjectsService } from './projects.service';
-import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
-import { JwtBearerScope } from '../jwt-helper/jwt-helper.enum';
-import { AuthGuard } from '../auth/auth.guard';
-import { JwtPayload } from '../interfaces';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ProjectCreateDto, ProjectUpdateDto } from '../dto';
 
 @ApiTags('projects')
 @ApiBearerAuth()
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService, private readonly jwtHelperService: JwtHelperService) {}
+  constructor(private readonly projectsService: ProjectsService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
-  @UseGuards(AuthGuard)
-  async createOne(@Req() req: Request & { user: JwtPayload }, @Body() dto: ProjectCreateDto) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ProjectsCreate], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async createOne(@Body() dto: ProjectCreateDto) {
     return await this.projectsService.create(dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('/')
-  @UseGuards(AuthGuard)
-  async getProjects(@Req() req: Request & { user: JwtPayload }) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ProjectsRead], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async getProjects() {
     return await this.projectsService.getAll();
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
-  @UseGuards(AuthGuard)
-  async getProjectById(@Req() req: Request & { user: JwtPayload }, @Param('id') id: string) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ProjectsRead], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async getProjectById(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
@@ -61,14 +50,8 @@ export class ProjectsController {
 
   @HttpCode(HttpStatus.OK)
   @Patch('/:id')
-  @UseGuards(AuthGuard)
-  async updateProjectById(
-    @Req() req: Request & { user: JwtPayload },
-    @Param('id') id: string,
-    @Body() dto: ProjectUpdateDto,
-  ) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ProjectsUpdate], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async updateProjectById(@Param('id') id: string, @Body() dto: ProjectUpdateDto) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
@@ -85,10 +68,8 @@ export class ProjectsController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
-  @UseGuards(AuthGuard)
-  async deleteProjectById(@Req() req: Request & { user: JwtPayload }, @Param('id') id: string) {
-    this.jwtHelperService.assertRequiredScopes([JwtBearerScope.ProjectsDelete], req.user.scopes);
-
+  @UseGuards(JwtAuthGuard)
+  async deleteProjectById(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }

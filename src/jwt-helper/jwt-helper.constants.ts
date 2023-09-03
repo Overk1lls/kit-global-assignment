@@ -14,6 +14,8 @@ export const JwtBearerScopeDescriptions: Readonly<Record<JwtBearerScope, string>
 
 export const jwtScopeStrings = Object.values(JwtBearerScope);
 export const fullAccessScopes = Object.values(JwtBearerScope).filter((s) => s !== JwtBearerScope.TokenRefresh);
+export const exerciseScopes = Object.values(JwtBearerScope).filter((s) => s.startsWith('exercises'));
+export const projectScopes = Object.values(JwtBearerScope).filter((s) => s.startsWith('projects'));
 
 export const jwtAudience = 'users';
 export const jwtAlgorithm = 'HS512';

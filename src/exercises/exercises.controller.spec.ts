@@ -4,13 +4,7 @@ import { ExercisesController } from './exercises.controller';
 import { ExercisesService } from './exercises.service';
 import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
 import { ExerciseCreateDto } from '../dto';
-import {
-  mockExercise,
-  mockExercisesService,
-  mockJwtHelperService,
-  mockObjectIdString,
-  mockRequest,
-} from '../../test/mocks';
+import { mockExercise, mockExercisesService, mockJwtHelperService, mockObjectIdString } from '../../test/mocks';
 
 describe('ExercisesController', () => {
   let controller: ExercisesController;
@@ -39,13 +33,13 @@ describe('ExercisesController', () => {
   });
 
   it('should create an exercise', async () => {
-    const exercise = await controller.createOne(mockRequest, mockExercise as any as ExerciseCreateDto);
+    const exercise = await controller.createOne(mockExercise as any as ExerciseCreateDto);
 
     expect(exercise).toEqual(mockExercise);
   });
 
   it('should get a list of exercises', async () => {
-    const result = await controller.getExercises(mockRequest, {});
+    const result = await controller.getExercises({});
 
     expect(result.total).toBe(result.exercises.length);
     expect(result.exercises).toHaveLength(result.total);
@@ -54,13 +48,13 @@ describe('ExercisesController', () => {
 
   describe('getExerciseById()', () => {
     it('should get an exercise by id', async () => {
-      const exercise = await controller.getExerciseById(mockRequest, mockObjectIdString);
+      const exercise = await controller.getExerciseById(mockObjectIdString);
 
       expect(exercise).toEqual(mockExercise);
     });
 
     it('should throw the invalid id error', async () => {
-      const getExercise = async () => await controller.getExerciseById(mockRequest, '123');
+      const getExercise = async () => await controller.getExerciseById('123');
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
     });
@@ -68,7 +62,7 @@ describe('ExercisesController', () => {
 
   describe('updateExerciseById()', () => {
     it('should update an exercise by id', async () => {
-      const exercise = await controller.updateExerciseById(mockRequest, mockObjectIdString, { name: 'test-2' });
+      const exercise = await controller.updateExerciseById(mockObjectIdString, { name: 'test-2' });
 
       expect(exercise).toEqual({
         message: 'Successfully updated!',
@@ -77,13 +71,13 @@ describe('ExercisesController', () => {
     });
 
     it('should throw the nothing to update error', async () => {
-      const getExercise = async () => await controller.updateExerciseById(mockRequest, mockObjectIdString, {});
+      const getExercise = async () => await controller.updateExerciseById(mockObjectIdString, {});
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
     });
 
     it('should throw the invalid id error', async () => {
-      const getExercise = async () => await controller.updateExerciseById(mockRequest, '123', {});
+      const getExercise = async () => await controller.updateExerciseById('123', {});
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
     });
@@ -91,13 +85,13 @@ describe('ExercisesController', () => {
 
   describe('deleteExerciseById()', () => {
     it('should delete an exercise by id', async () => {
-      await controller.deleteExerciseById(mockRequest, mockObjectIdString);
+      await controller.deleteExerciseById(mockObjectIdString);
 
       expect(mockExercisesService.deleteOneById).toHaveBeenCalled();
     });
 
     it('should throw the invalid id error', async () => {
-      const getExercise = async () => await controller.deleteExerciseById(mockRequest, '123');
+      const getExercise = async () => await controller.deleteExerciseById('123');
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
     });
