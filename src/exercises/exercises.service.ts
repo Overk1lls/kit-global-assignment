@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { Exercise } from './schemas';
@@ -19,6 +19,7 @@ export class ExercisesService {
 
   async getOneById(id: Types.ObjectId) {
     const exercise = await this.exerciseModel.findById(id);
+
     return exercise?.toObject();
   }
 
@@ -41,20 +42,12 @@ export class ExercisesService {
   async updateOneById(id: Types.ObjectId, query: UpdateQuery<Exercise>) {
     const exercise = await this.exerciseModel.findByIdAndUpdate(id, query, { new: true, upsert: false });
 
-    if (!exercise) {
-      throw new BadRequestException('Such exercise not found!');
-    }
-
-    return exercise.toObject();
+    return exercise?.toObject();
   }
 
   async deleteOneById(id: Types.ObjectId) {
     const result = await this.exerciseModel.findByIdAndDelete(id);
 
-    if (!result) {
-      throw new BadRequestException('Such exercise not found!');
-    }
-
-    return result.toObject();
+    return result?.toObject();
   }
 }

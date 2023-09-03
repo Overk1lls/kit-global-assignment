@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -60,9 +61,14 @@ export class ProjectsController {
       throw new BadRequestException('Nothing to update!');
     }
 
+    const updatedProject = await this.projectsService.updateOneById(new Types.ObjectId(id), dto);
+    if (!updatedProject) {
+      throw new NotFoundException('Project with such id is not found!');
+    }
+
     return {
       message: 'Sucessfully updated!',
-      project: await this.projectsService.updateOneById(new Types.ObjectId(id), dto),
+      project: updatedProject,
     };
   }
 
@@ -74,6 +80,9 @@ export class ProjectsController {
       throw new BadRequestException('Invalid id');
     }
 
-    await this.projectsService.deleteOneById(new Types.ObjectId(id));
+    const deletedProject = await this.projectsService.deleteOneById(new Types.ObjectId(id));
+    if (!deletedProject) {
+      throw new NotFoundException('Such exercise not found!');
+    }
   }
 }

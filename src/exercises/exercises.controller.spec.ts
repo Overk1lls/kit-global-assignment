@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExercisesController } from './exercises.controller';
 import { ExercisesService } from './exercises.service';
@@ -58,6 +58,14 @@ describe('ExercisesController', () => {
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
     });
+
+    it('should throw an error (not found)', async () => {
+      mockExercisesService.getOneById = jest.fn().mockResolvedValueOnce(undefined);
+
+      const getExercise = async () => await controller.getExerciseById(mockObjectIdString);
+
+      expect(() => getExercise()).rejects.toThrowError(NotFoundException);
+    });
   });
 
   describe('updateExerciseById()', () => {
@@ -81,6 +89,14 @@ describe('ExercisesController', () => {
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
     });
+
+    it('should throw an error (not found)', async () => {
+      mockExercisesService.updateOneById = jest.fn().mockResolvedValueOnce(undefined);
+
+      const invokeFn = async () => await controller.updateExerciseById(mockObjectIdString, { name: 'test-2' });
+
+      expect(invokeFn).rejects.toThrowError(NotFoundException);
+    });
   });
 
   describe('deleteExerciseById()', () => {
@@ -94,6 +110,14 @@ describe('ExercisesController', () => {
       const getExercise = async () => await controller.deleteExerciseById('123');
 
       expect(() => getExercise()).rejects.toThrowError(BadRequestException);
+    });
+
+    it('should throw an error (not found)', async () => {
+      mockExercisesService.deleteOneById = jest.fn().mockResolvedValueOnce(undefined);
+
+      const invokeFn = async () => await controller.deleteExerciseById(mockObjectIdString);
+
+      expect(invokeFn).rejects.toThrowError(NotFoundException);
     });
   });
 });

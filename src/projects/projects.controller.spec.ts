@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
@@ -6,10 +6,11 @@ import { JwtHelperService } from '../jwt-helper/jwt-helper.service';
 import { mockJwtHelperService, mockObjectIdString, mockProject, mockProjectsService } from '../../test/mocks';
 
 describe('ProjectsController', () => {
+  let moduleRef: TestingModule;
   let controller: ProjectsController;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       controllers: [ProjectsController],
       providers: [
         {
@@ -23,7 +24,11 @@ describe('ProjectsController', () => {
       ],
     }).compile();
 
-    controller = module.get<ProjectsController>(ProjectsController);
+    controller = moduleRef.get<ProjectsController>(ProjectsController);
+  });
+
+  afterAll(async () => {
+    await moduleRef.close();
   });
 
   describe('create()', () => {
@@ -78,6 +83,14 @@ describe('ProjectsController', () => {
 
       expect(invokeFn).rejects.toThrowError(BadRequestException);
     });
+
+    it('should throw an error (not found)', async () => {
+      mockProjectsService.updateOneById = jest.fn().mockResolvedValueOnce(undefined);
+
+      const invokeFn = async () => await controller.updateProjectById(mockObjectIdString, { name: 'test-2' });
+
+      expect(invokeFn).rejects.toThrowError(NotFoundException);
+    });
   });
 
   describe('deleteProjectById()', () => {
@@ -91,6 +104,14 @@ describe('ProjectsController', () => {
       const invokeFn = async () => await controller.deleteProjectById('123');
 
       expect(invokeFn).rejects.toThrowError(BadRequestException);
+    });
+
+    it('should throw an error (not found)', async () => {
+      mockProjectsService.deleteOneById = jest.fn().mockResolvedValueOnce(undefined);
+
+      const invokeFn = async () => await controller.deleteProjectById(mockObjectIdString);
+
+      expect(invokeFn).rejects.toThrowError(NotFoundException);
     });
   });
 });

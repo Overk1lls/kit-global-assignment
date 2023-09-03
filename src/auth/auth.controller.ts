@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, ConflictException, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthResponseDto, SignInDto, SignUpDto } from './dto';
@@ -17,6 +17,13 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   async signUp(@Body() dto: SignUpDto): Promise<AuthResponseDto> {
-    return await this.authService.signUp(dto);
+    try {
+      return await this.authService.signUp(dto);
+    } catch (error) {
+      if (error.message.indexOf('E11000') !== -1) {
+        throw new ConflictException('User with such credentials already exists!');
+      }
+      throw error;
+    }
   }
 }

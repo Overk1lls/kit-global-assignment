@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { ExercisesService } from './exercises.service';
@@ -7,10 +6,11 @@ import { ExerciseCreateDto } from './dto';
 import { mockExercise, mockExerciseModel, mockObjectId } from '../../test/mocks';
 
 describe('ExercisesService', () => {
-  let exercisesService: ExercisesService;
+  let moduleRef: TestingModule;
+  let service: ExercisesService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       providers: [
         ExercisesService,
         {
@@ -20,12 +20,16 @@ describe('ExercisesService', () => {
       ],
     }).compile();
 
-    exercisesService = module.get<ExercisesService>(ExercisesService);
+    service = moduleRef.get<ExercisesService>(ExercisesService);
+  });
+
+  afterAll(async () => {
+    await moduleRef.close();
   });
 
   describe('create()', () => {
     it('should create an exercise', async () => {
-      const exercise = await exercisesService.create(mockExercise as any as ExerciseCreateDto);
+      const exercise = await service.create(mockExercise as any as ExerciseCreateDto);
 
       expect(exercise).toEqual(mockExercise);
     });
@@ -33,7 +37,7 @@ describe('ExercisesService', () => {
 
   describe('getOneById()', () => {
     it('should find an exercise by id', async () => {
-      const exercise = await exercisesService.getOneById(mockObjectId);
+      const exercise = await service.getOneById(mockObjectId);
 
       expect(exercise).toEqual(mockExercise);
     });
@@ -41,7 +45,7 @@ describe('ExercisesService', () => {
 
   describe('getAll()', () => {
     it('should find all exercises', async () => {
-      const exercise = await exercisesService.getAll({ project: '123', status: 'Completed' });
+      const exercise = await service.getAll({ project: '123', status: 'Completed' });
 
       expect(exercise[0]).toEqual(mockExercise);
     });
@@ -49,33 +53,17 @@ describe('ExercisesService', () => {
 
   describe('updateOneById()', () => {
     it('should update an exercise by id', async () => {
-      const exercise = await exercisesService.updateOneById(mockObjectId, {});
+      const exercise = await service.updateOneById(mockObjectId, {});
 
       expect(exercise).toEqual(mockExercise);
-    });
-
-    it('should throw an error', async () => {
-      mockExerciseModel.findByIdAndUpdate = jest.fn().mockResolvedValueOnce(undefined);
-
-      const invokeFn = async () => await exercisesService.updateOneById(mockObjectId, {});
-
-      expect(invokeFn).rejects.toThrowError(BadRequestException);
     });
   });
 
   describe('deleteOneById()', () => {
     it('should delete an exercise by id', async () => {
-      await exercisesService.deleteOneById(mockObjectId);
+      await service.deleteOneById(mockObjectId);
 
       expect(mockExerciseModel.findByIdAndDelete).toHaveBeenCalled();
-    });
-
-    it('should throw an error', async () => {
-      mockExerciseModel.findByIdAndDelete = jest.fn().mockResolvedValueOnce(undefined);
-
-      const invokeFn = async () => await exercisesService.deleteOneById(mockObjectId);
-
-      expect(invokeFn).rejects.toThrowError(BadRequestException);
     });
   });
 });

@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { ProjectsService } from './projects.service';
@@ -8,10 +7,11 @@ import { ProjectCreateDto } from './dto';
 import { mockExercise, mockExerciseModel, mockObjectId, mockProject, mockProjectModel } from '../../test/mocks';
 
 describe('ProjectsService', () => {
+  let moduleRef: TestingModule;
   let service: ProjectsService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       providers: [
         ProjectsService,
         {
@@ -25,7 +25,11 @@ describe('ProjectsService', () => {
       ],
     }).compile();
 
-    service = module.get<ProjectsService>(ProjectsService);
+    service = moduleRef.get<ProjectsService>(ProjectsService);
+  });
+
+  afterAll(async () => {
+    await moduleRef.close();
   });
 
   describe('create()', () => {
@@ -63,14 +67,6 @@ describe('ProjectsService', () => {
 
       expect(project).toEqual(mockProject);
     });
-
-    it('should throw an error', async () => {
-      mockProjectModel.findByIdAndUpdate = jest.fn().mockResolvedValueOnce(undefined);
-
-      const invokeFn = async () => await service.updateOneById(mockObjectId, {});
-
-      expect(invokeFn).rejects.toThrowError(BadRequestException);
-    });
   });
 
   describe('deleteOneById()', () => {
@@ -78,14 +74,6 @@ describe('ProjectsService', () => {
       await service.deleteOneById(mockObjectId);
 
       expect(mockProjectModel.findByIdAndDelete).toHaveBeenCalled();
-    });
-
-    it('should throw an error', async () => {
-      mockProjectModel.findByIdAndDelete = jest.fn().mockResolvedValueOnce(undefined);
-
-      const invokeFn = async () => await service.deleteOneById(mockObjectId);
-
-      expect(invokeFn).rejects.toThrowError(BadRequestException);
     });
   });
 });

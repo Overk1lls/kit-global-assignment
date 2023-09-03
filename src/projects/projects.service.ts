@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, UpdateQuery } from 'mongoose';
 import { ProjectCreateDto } from './dto/project-create.dto';
@@ -32,22 +32,14 @@ export class ProjectsService {
   }
 
   async updateOneById(id: Types.ObjectId, query: UpdateQuery<Project>) {
-    const exercise = await this.ProjectModel.findByIdAndUpdate(id, query, { new: true, upsert: false });
+    const updatedProject = await this.ProjectModel.findByIdAndUpdate(id, query, { new: true, upsert: false });
 
-    if (!exercise) {
-      throw new BadRequestException('Project with such id is not found!');
-    }
-
-    return exercise.toObject();
+    return updatedProject?.toObject();
   }
 
   async deleteOneById(id: Types.ObjectId) {
     const result = await this.ProjectModel.findByIdAndDelete(id);
 
-    if (!result) {
-      throw new BadRequestException('Such exercise not found!');
-    }
-
-    return result.toObject();
+    return result?.toObject();
   }
 }

@@ -9,16 +9,9 @@ export class AuthService {
   constructor(private readonly usersService: UsersService, private readonly jwtHelperService: JwtHelperService) {}
 
   async signUp(dto: SignUpDto) {
-    try {
-      const newUser = await this.usersService.create(dto);
+    const newUser = await this.usersService.create(dto);
 
-      return await this.jwtHelperService.generateUserTokens(newUser._id);
-    } catch (error) {
-      if (error.message.indexOf('E11000') !== -1) {
-        throw new BadRequestException('User with such credentials already exists!');
-      }
-      throw error;
-    }
+    return await this.jwtHelperService.generateUserTokens(newUser._id);
   }
 
   async signIn(dto: SignInDto) {

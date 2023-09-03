@@ -11,6 +11,7 @@ import {
   Patch,
   Delete,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
@@ -51,7 +52,12 @@ export class ExercisesController {
       throw new BadRequestException('Invalid id');
     }
 
-    return await this.exercisesService.getOneById(new Types.ObjectId(id));
+    const exercise = await this.exercisesService.getOneById(new Types.ObjectId(id));
+    if (!exercise) {
+      throw new NotFoundException('Such exercise is not found!');
+    }
+
+    return exercise;
   }
 
   @HttpCode(HttpStatus.OK)
@@ -66,9 +72,14 @@ export class ExercisesController {
       throw new BadRequestException('Nothing to update!');
     }
 
+    const updatedEx = await this.exercisesService.updateOneById(new Types.ObjectId(id), dto);
+    if (!updatedEx) {
+      throw new NotFoundException('Such exercise not found!');
+    }
+
     return {
       message: 'Successfully updated!',
-      exercise: await this.exercisesService.updateOneById(new Types.ObjectId(id), dto),
+      exercise: updatedEx,
     };
   }
 
@@ -80,6 +91,9 @@ export class ExercisesController {
       throw new BadRequestException('Invalid id');
     }
 
-    await this.exercisesService.deleteOneById(new Types.ObjectId(id));
+    const deletedEx = await this.exercisesService.deleteOneById(new Types.ObjectId(id));
+    if (!deletedEx) {
+      throw new NotFoundException('Such exercise not found!');
+    }
   }
 }

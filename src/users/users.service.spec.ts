@@ -6,10 +6,11 @@ import { User } from './schemas';
 import { mockUser, mockUsersModel } from '../../test/mocks';
 
 describe('UsersService', () => {
-  let usersService: UsersService;
+  let moduleRef: TestingModule;
+  let service: UsersService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' })],
       providers: [
         UsersService,
@@ -20,12 +21,16 @@ describe('UsersService', () => {
       ],
     }).compile();
 
-    usersService = module.get<UsersService>(UsersService);
+    service = moduleRef.get<UsersService>(UsersService);
+  });
+
+  afterAll(async () => {
+    moduleRef.close();
   });
 
   describe('create()', () => {
     it('should create a user', async () => {
-      const user = await usersService.create(mockUser);
+      const user = await service.create(mockUser);
 
       expect(user).toEqual(mockUser);
     });
@@ -33,7 +38,7 @@ describe('UsersService', () => {
 
   describe('findOne()', () => {
     it('should find a user', async () => {
-      const user = await usersService.findOne({});
+      const user = await service.findOne({});
 
       expect(user).toEqual(mockUser);
     });

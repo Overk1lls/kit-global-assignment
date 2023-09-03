@@ -8,7 +8,7 @@ import { mockJwtHelperService, mockJwtTokens, mockUser, mockUsersService } from 
 
 describe('AuthService', () => {
   let moduleRef: TestingModule;
-  let authService: AuthService;
+  let service: AuthService;
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
@@ -25,7 +25,7 @@ describe('AuthService', () => {
       ],
     }).compile();
 
-    authService = moduleRef.get<AuthService>(AuthService);
+    service = moduleRef.get<AuthService>(AuthService);
   });
 
   afterAll(async () => {
@@ -34,31 +34,15 @@ describe('AuthService', () => {
 
   describe('signUp()', () => {
     it('should be success', async () => {
-      const result = await authService.signUp(mockUser);
+      const result = await service.signUp(mockUser);
 
       expect(result).toEqual(mockJwtTokens);
-    });
-
-    it('should throw an error (any)', async () => {
-      mockUsersService.create = jest.fn().mockRejectedValueOnce(new Error('error'));
-
-      const invokeFn = async () => await authService.signUp(mockUser);
-
-      expect(invokeFn).rejects.toThrowError(Error);
-    });
-
-    it('should throw an error (credentials)', async () => {
-      mockUsersService.create = jest.fn().mockRejectedValueOnce(new Error('error E11000'));
-
-      const invokeFn = async () => await authService.signUp(mockUser);
-
-      expect(invokeFn).rejects.toThrowError(BadRequestException);
     });
   });
 
   describe('signIn()', () => {
     it('should be success', async () => {
-      const result = await authService.signIn(mockUser);
+      const result = await service.signIn(mockUser);
 
       expect(result).toEqual(mockJwtTokens);
     });
@@ -67,7 +51,7 @@ describe('AuthService', () => {
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(false as never);
 
       const invokeFn = async () =>
-        await authService.signIn({
+        await service.signIn({
           username: '123',
           password: '123',
         });
@@ -79,7 +63,7 @@ describe('AuthService', () => {
       mockUsersService.findOne = jest.fn().mockImplementationOnce(() => undefined);
 
       const invokeFn = async () =>
-        await authService.signIn({
+        await service.signIn({
           username: '123',
           password: '123',
         });
