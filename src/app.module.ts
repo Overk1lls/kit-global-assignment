@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseConfigService } from './common/mongoose-config/mongoose-config.service';
 import { JwtHelperModule } from './jwt-helper/jwt-helper.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { AuthModule } from './auth/auth.module';
@@ -16,10 +17,7 @@ import { ProjectsMiddleware } from './projects/projects.middleware';
       isGlobal: true,
     }),
     MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.getOrThrow<string>('MONGO_URI'),
-      }),
+      useClass: MongooseConfigService,
     }),
     JwtHelperModule,
     AuthModule,

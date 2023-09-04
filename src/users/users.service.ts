@@ -2,9 +2,9 @@ import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, ProjectionType, Types } from 'mongoose';
-import { SignUpDto } from '../auth/dto';
+import { FilterQuery, Model, ProjectionType } from 'mongoose';
 import { User } from './schemas';
+import { SignUpDto } from '../auth/dto';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +14,7 @@ export class UsersService {
     @InjectModel(User.name) private readonly UserModel: Model<User>,
   ) {}
 
-  async create(dto: SignUpDto): Promise<Omit<User, 'password'> & { _id: Types.ObjectId }> {
+  async create(dto: SignUpDto) {
     const document = await this.UserModel.create({
       email: dto.email.toLowerCase(),
       username: dto.username,
@@ -28,6 +28,7 @@ export class UsersService {
 
   async findOne(filterQuery: FilterQuery<User>, projection: ProjectionType<User> = { password: false }) {
     const user = await this.UserModel.findOne(filterQuery, projection);
+
     return user?.toObject();
   }
 

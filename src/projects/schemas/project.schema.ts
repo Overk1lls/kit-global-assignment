@@ -1,9 +1,15 @@
+import { Transform } from 'class-transformer';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Exercise } from '../../exercises/schemas/exercise.schema';
 
-@Schema({ collection: 'projects', timestamps: true })
+export type ProjectDocument = Project & Document;
+
+@Schema({ collection: 'projects', timestamps: true, versionKey: false })
 export class Project {
+  @Transform(({ value }) => value.toString())
+  _id: string;
+
   @Prop({ required: true })
   name: string;
 
