@@ -17,7 +17,14 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ExercisesService } from './exercises.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ExerciseCreateDto, ExerciseQueryDto, ExerciseUpdateDto } from './dto';
+import {
+  ExerciseCreateDto,
+  ExercisesResponseDto,
+  ExerciseCreatedDto,
+  ExerciseQueryDto,
+  ExerciseUpdateDto,
+  ExerciseUpdateResponseDto,
+} from './dto';
 
 @ApiTags('exercises')
 @ApiBearerAuth()
@@ -28,14 +35,14 @@ export class ExercisesController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   @UseGuards(JwtAuthGuard)
-  async createOne(@Body() dto: ExerciseCreateDto) {
+  async createOne(@Body() dto: ExerciseCreateDto): Promise<ExerciseCreatedDto> {
     return await this.exercisesService.create(dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('/')
   @UseGuards(JwtAuthGuard)
-  async getExercises(@Query() query: ExerciseQueryDto) {
+  async getExercises(@Query() query: ExerciseQueryDto): Promise<ExercisesResponseDto> {
     const exercises = await this.exercisesService.getAll(query);
 
     return {
@@ -47,7 +54,7 @@ export class ExercisesController {
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
-  async getExerciseById(@Param('id') id: string) {
+  async getExerciseById(@Param('id') id: string): Promise<ExerciseCreatedDto> {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
@@ -63,7 +70,10 @@ export class ExercisesController {
   @HttpCode(HttpStatus.OK)
   @Patch('/:id')
   @UseGuards(JwtAuthGuard)
-  async updateExerciseById(@Param('id') id: string, @Body() dto: ExerciseUpdateDto) {
+  async updateExerciseById(
+    @Param('id') id: string,
+    @Body() dto: ExerciseUpdateDto,
+  ): Promise<ExerciseUpdateResponseDto> {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }

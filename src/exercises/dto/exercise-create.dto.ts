@@ -1,7 +1,7 @@
-import { IsArray, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { StatusType } from '../exercises.types';
 import { ExerciseStatuses } from '../exercises.constants';
+import { Project } from '../../projects/schemas';
 
 export class ExerciseCreateDto {
   @IsString()
@@ -31,14 +31,7 @@ export class ExerciseCreatedDto {
   @IsIn(ExerciseStatuses)
   @IsString()
   status: StatusType;
-}
 
-export class ExerciseCreateResponseDto {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ExerciseCreatedDto)
-  exercises: ExerciseCreatedDto[];
-
-  @IsNumber()
-  total: number;
+  @IsString()
+  project: Project;
 }

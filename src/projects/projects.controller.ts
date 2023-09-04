@@ -17,7 +17,13 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ProjectCreateDto, ProjectQueryDto, ProjectUpdateDto } from './dto';
+import {
+  ProjectCreateDto,
+  ProjectQueryDto,
+  ProjectUpdateDto,
+  ProjectUpdateResponseDto,
+  ProjectsResponseDto,
+} from './dto';
 
 @ApiTags('projects')
 @ApiBearerAuth()
@@ -28,14 +34,14 @@ export class ProjectsController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   @UseGuards(JwtAuthGuard)
-  async createOne(@Body() dto: ProjectCreateDto) {
+  async createOne(@Body() dto: ProjectCreateDto): Promise<ProjectCreateDto> {
     return await this.projectsService.create(dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('/')
   @UseGuards(JwtAuthGuard)
-  async getProjects(@Query() query: ProjectQueryDto) {
+  async getProjects(@Query() query: ProjectQueryDto): Promise<ProjectsResponseDto> {
     const projects = await this.projectsService.getAll(query);
 
     return {
@@ -47,7 +53,7 @@ export class ProjectsController {
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
-  async getProjectById(@Param('id') id: string) {
+  async getProjectById(@Param('id') id: string): Promise<ProjectCreateDto> {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
@@ -58,7 +64,7 @@ export class ProjectsController {
   @HttpCode(HttpStatus.OK)
   @Patch('/:id')
   @UseGuards(JwtAuthGuard)
-  async updateProjectById(@Param('id') id: string, @Body() dto: ProjectUpdateDto) {
+  async updateProjectById(@Param('id') id: string, @Body() dto: ProjectUpdateDto): Promise<ProjectUpdateResponseDto> {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid id');
     }
