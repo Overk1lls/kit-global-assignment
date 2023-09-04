@@ -13,10 +13,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiErrorDescription } from '../common/enum';
 import {
   ProjectCreateDto,
   ProjectQueryDto,
@@ -50,32 +51,42 @@ export class ProjectsController {
     };
   }
 
+  @ApiBadRequestResponse({ description: ApiErrorDescription.INVALID_ID })
+  @ApiNotFoundResponse({ description: ApiErrorDescription.NOT_FOUND })
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
   async getProjectById(@Param('id') id: string): Promise<ProjectCreateDto> {
     if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException(ApiErrorDescription.INVALID_ID);
     }
 
-    return await this.projectsService.getOneById(new Types.ObjectId(id));
+    const project = await this.projectsService.getOneById(new Types.ObjectId(id));
+    if (!project) {
+      throw new NotFoundException(ApiErrorDescription.NOT_FOUND);
+    }
+
+    return project;
   }
 
+  @ApiBadRequestResponse({ description: ApiErrorDescription.INVALID_ID })
+  @ApiBadRequestResponse({ description: ApiErrorDescription.NOTHING_TO_UPDATE })
+  @ApiNotFoundResponse({ description: ApiErrorDescription.NOT_FOUND })
   @HttpCode(HttpStatus.OK)
   @Patch('/:id')
   @UseGuards(JwtAuthGuard)
   async updateProjectById(@Param('id') id: string, @Body() dto: ProjectUpdateDto): Promise<ProjectUpdateResponseDto> {
     if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException(ApiErrorDescription.INVALID_ID);
     }
 
     if (Object.values(dto).every((v) => !v)) {
-      throw new BadRequestException('Nothing to update!');
+      throw new BadRequestException(ApiErrorDescription.NOTHING_TO_UPDATE);
     }
 
     const updatedProject = await this.projectsService.updateOneById(new Types.ObjectId(id), dto);
     if (!updatedProject) {
-      throw new NotFoundException('Project with such id is not found!');
+      throw new NotFoundException(ApiErrorDescription.NOT_FOUND);
     }
 
     return {
@@ -84,17 +95,19 @@ export class ProjectsController {
     };
   }
 
+  @ApiBadRequestResponse({ description: ApiErrorDescription.INVALID_ID })
+  @ApiNotFoundResponse({ description: ApiErrorDescription.NOT_FOUND })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   async deleteProjectById(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException(ApiErrorDescription.INVALID_ID);
     }
 
     const deletedProject = await this.projectsService.deleteOneById(new Types.ObjectId(id));
     if (!deletedProject) {
-      throw new NotFoundException('Such exercise not found!');
+      throw new NotFoundException(ApiErrorDescription.NOT_FOUND);
     }
   }
 }

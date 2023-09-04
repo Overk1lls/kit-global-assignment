@@ -13,7 +13,7 @@ import {
   Query,
   NotFoundException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ExercisesService } from './exercises.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -25,6 +25,7 @@ import {
   ExerciseUpdateDto,
   ExerciseUpdateResponseDto,
 } from './dto';
+import { ApiErrorDescription } from '../common/enum';
 
 @ApiTags('exercises')
 @ApiBearerAuth()
@@ -51,22 +52,27 @@ export class ExercisesController {
     };
   }
 
+  @ApiBadRequestResponse({ description: ApiErrorDescription.INVALID_ID })
+  @ApiNotFoundResponse({ description: ApiErrorDescription.NOT_FOUND })
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
   async getExerciseById(@Param('id') id: string): Promise<ExerciseCreatedDto> {
     if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException(ApiErrorDescription.INVALID_ID);
     }
 
     const exercise = await this.exercisesService.getOneById(new Types.ObjectId(id));
     if (!exercise) {
-      throw new NotFoundException('Such exercise is not found!');
+      throw new NotFoundException(ApiErrorDescription.NOT_FOUND);
     }
 
     return exercise;
   }
 
+  @ApiBadRequestResponse({ description: ApiErrorDescription.INVALID_ID })
+  @ApiBadRequestResponse({ description: ApiErrorDescription.NOTHING_TO_UPDATE })
+  @ApiNotFoundResponse({ description: ApiErrorDescription.NOT_FOUND })
   @HttpCode(HttpStatus.OK)
   @Patch('/:id')
   @UseGuards(JwtAuthGuard)
@@ -75,16 +81,16 @@ export class ExercisesController {
     @Body() dto: ExerciseUpdateDto,
   ): Promise<ExerciseUpdateResponseDto> {
     if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException(ApiErrorDescription.INVALID_ID);
     }
 
     if (Object.values(dto).every((v) => !v)) {
-      throw new BadRequestException('Nothing to update!');
+      throw new BadRequestException(ApiErrorDescription.NOTHING_TO_UPDATE);
     }
 
     const updatedEx = await this.exercisesService.updateOneById(new Types.ObjectId(id), dto);
     if (!updatedEx) {
-      throw new NotFoundException('Such exercise not found!');
+      throw new NotFoundException(ApiErrorDescription.NOT_FOUND);
     }
 
     return {
@@ -93,17 +99,20 @@ export class ExercisesController {
     };
   }
 
+  @ApiBadRequestResponse({ description: ApiErrorDescription.INVALID_ID })
+  @ApiBadRequestResponse({ description: ApiErrorDescription.NOTHING_TO_UPDATE })
+  @ApiNotFoundResponse({ description: ApiErrorDescription.NOT_FOUND })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   async deleteExerciseById(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException(ApiErrorDescription.INVALID_ID);
     }
 
     const deletedEx = await this.exercisesService.deleteOneById(new Types.ObjectId(id));
     if (!deletedEx) {
-      throw new NotFoundException('Such exercise not found!');
+      throw new NotFoundException(ApiErrorDescription.NOT_FOUND);
     }
   }
 }
