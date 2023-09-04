@@ -54,10 +54,12 @@ describe('ProjectsService', () => {
 
   describe('getAll()', () => {
     it('should find all projects', async () => {
-      const projects = await service.getAll();
-      const { _id, name, description } = mockProject;
+      mockProjectModel.populate = jest.fn().mockReturnThis();
 
-      expect(projects).toEqual(expect.objectContaining({ _id, name, description }));
+      const projects = await service.getAll({ name: 'test' });
+
+      expect(projects).toHaveLength(1);
+      expect(projects[0]).toEqual(mockProject);
     });
   });
 

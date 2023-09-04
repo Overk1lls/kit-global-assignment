@@ -41,9 +41,10 @@ describe('ProjectsController', () => {
 
   describe('getProjects()', () => {
     it('should get all projects', async () => {
-      const projects = await controller.getProjects();
+      const { projects, total } = await controller.getProjects({ name: 'test' });
 
-      expect(projects).toHaveLength(1);
+      expect(projects).toHaveLength(total);
+      expect(total).toEqual(projects.length);
       expect(projects[0]).toEqual(mockProject);
     });
   });

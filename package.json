@@ -86,7 +86,8 @@
       ".middleware.ts",
       ".env.helper.ts",
       "main.ts",
-      "index.ts"
+      "index.ts",
+      "mongoose-config.service.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

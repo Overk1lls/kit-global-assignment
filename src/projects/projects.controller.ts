@@ -10,13 +10,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Types, isValidObjectId } from 'mongoose';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ProjectCreateDto, ProjectUpdateDto } from './dto';
+import { ProjectCreateDto, ProjectQueryDto, ProjectUpdateDto } from './dto';
 
 @ApiTags('projects')
 @ApiBearerAuth()
@@ -34,8 +35,13 @@ export class ProjectsController {
   @HttpCode(HttpStatus.OK)
   @Get('/')
   @UseGuards(JwtAuthGuard)
-  async getProjects() {
-    return await this.projectsService.getAll();
+  async getProjects(@Query() query: ProjectQueryDto) {
+    const projects = await this.projectsService.getAll(query);
+
+    return {
+      projects,
+      total: projects.length,
+    };
   }
 
   @HttpCode(HttpStatus.OK)

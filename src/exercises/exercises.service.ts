@@ -33,7 +33,7 @@ export class ExercisesService {
       .find(filter)
       .limit(query.limit)
       .skip(query.skip)
-      .sort({ updatedAt: query.createdAt })
+      .sort({ createdAt: query.createdAt })
       .exec();
 
     return exercises.map((ex) => ex.toObject());

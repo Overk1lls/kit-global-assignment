@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, UpdateQuery } from 'mongoose';
+import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { ProjectCreateDto } from './dto/project-create.dto';
 import { Project } from './schemas';
 import { Exercise } from '../exercises/schemas';
+import { ProjectQueryDto } from './dto';
 
 @Injectable()
 export class ProjectsService {
@@ -23,8 +24,19 @@ export class ProjectsService {
     return await this.ProjectModel.findByIdAndUpdate(project._id, { $push: { exercises } }, { new: true });
   }
 
-  async getAll() {
-    return await this.ProjectModel.find().populate('exercises');
+  async getAll(query: ProjectQueryDto) {
+    const filter: FilterQuery<Project> = {};
+
+    if (query.name) Object.assign(filter, { name: query.name });
+
+    const projects = await this.ProjectModel.find(filter)
+      .populate('exercises')
+      .limit(query.limit)
+      .skip(query.skip)
+      .sort({ createdAt: query.createdAt })
+      .exec();
+
+    return projects.map((p) => p.toObject());
   }
 
   async getOneById(id: Types.ObjectId) {
